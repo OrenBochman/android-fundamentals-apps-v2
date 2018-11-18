@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         // Context menu
-        registerForContextMenu(mRecyclerView);
+        // registerForContextMenu(mRecyclerView);
     }
 
     private void genList() {

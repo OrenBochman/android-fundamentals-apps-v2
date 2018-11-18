@@ -17,6 +17,7 @@
 package com.example.android.recyclerview;
 
 import android.content.Context;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,11 +34,13 @@ import java.util.LinkedList;
 public class WordListAdapter extends
         RecyclerView.Adapter<WordListAdapter.WordViewHolder> {
 
+    String TAG = WordListAdapter.class.getName();
+
     private final LinkedList<String> mWordList;
     private final LayoutInflater mInflater;
 
     class WordViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
+            implements View.OnClickListener, View.OnLongClickListener {
         public final TextView wordItemView;
         final WordListAdapter mAdapter;
         private boolean isFirst;
@@ -57,6 +60,8 @@ public class WordListAdapter extends
             wordItemView = itemView.findViewById(R.id.word);
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+
         }
 
         @Override
@@ -73,6 +78,8 @@ public class WordListAdapter extends
             // update the RecyclerView to display the data.
             mAdapter.notifyDataSetChanged();
         }
+
+
 
         public boolean getIsInTheMiddle() {
             return this.isMiddle;
@@ -97,6 +104,30 @@ public class WordListAdapter extends
         public void setIsLast(boolean b) {
             this.isLast = b;
         }
+
+
+        @Override
+        public boolean onLongClick(View view) {
+            // Get the position of the item that was clicked.
+            int mPosition = getLayoutPosition();
+
+            // Use that to access the affected item in mWordList.
+            String element = mWordList.get(mPosition);
+            // Change the word in the mWordList.
+
+            AlertDialog dialog = new AlertDialog.Builder(view.getContext())
+                    .setTitle("Context Menu")
+                    //.setIcon(footballTeam.getFlagImage())
+                    .setMessage(element)
+                    .setPositiveButton("Delete", (dialog1, which) ->
+                        Log.e(TAG, "onLongClick: deleted: "+ element))
+                    .setNegativeButton("Share", (dialog1, which) ->
+                            Log.e(TAG, "onLongClick: shared: "+ element))
+                    .create();
+            dialog.show();
+            return false;
+        }
+
     }
 
     public WordListAdapter(Context context, LinkedList<String> wordList) {
