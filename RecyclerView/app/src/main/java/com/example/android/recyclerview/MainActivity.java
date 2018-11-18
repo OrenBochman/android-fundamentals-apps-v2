@@ -22,7 +22,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -48,23 +50,20 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int wordListSize = mWordList.size();
-                // Add a new word to the wordList.
-                mWordList.addLast("+ Word " + wordListSize);
-                // Notify the adapter, that the data has changed.
-                mRecyclerView.getAdapter().notifyItemInserted(wordListSize);
-                // Scroll to the bottom.
-                mRecyclerView.smoothScrollToPosition(wordListSize);
-            }
-        });
+        fab.setOnClickListener(view -> {
+            int wordListSize = mWordList.size();
+            // Add a new word to the wordList.
+            mWordList.addLast("+ Word " + wordListSize);
+            // Notify the adapter, that the data has changed.
+            mRecyclerView.getAdapter().notifyItemInserted(wordListSize);
+            // Scroll to the bottom.
+            mRecyclerView.smoothScrollToPosition(wordListSize);
 
-        // Put initial data into the word list.
-        for (int i = 0; i < 20; i++) {
-            mWordList.addLast("Word " + i);
-        }
+
+
+        });
+        genList();
+
 
         // Create recycler view.
         mRecyclerView = findViewById(R.id.recyclerview);
@@ -74,6 +73,16 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Context menu
+        registerForContextMenu(mRecyclerView);
+    }
+
+    private void genList() {
+        mWordList.clear();
+        // Put initial data into the word list.
+        for (int i = 0; i < 20; i++) {
+            mWordList.addLast("Word " + i);
+        }
     }
 
     /**
@@ -107,8 +116,28 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }else  if (id == R.id.action_reset) {
+            genList();
+            mRecyclerView.getAdapter().notifyDataSetChanged();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        // inflate menu
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_recycler, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        return super.onContextItemSelected(item);
+    //    RecyclerViewContextMenuInfo info = (RecyclerViewContextMenuInfo) item.getMenuInfo();
+        // handle menu item here
     }
 }

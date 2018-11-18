@@ -18,6 +18,7 @@ package com.example.android.recyclerview;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,14 +40,17 @@ public class WordListAdapter extends
             implements View.OnClickListener {
         public final TextView wordItemView;
         final WordListAdapter mAdapter;
+        private boolean isFirst;
+        private boolean isLast;
+        private boolean isMiddle;
 
         /**
          * Creates a new custom view holder to hold the view to display in
          * the RecyclerView.
          *
          * @param itemView The view in which to display the data.
-         * @param adapter The adapter that manages the the data and views
-         *                for the RecyclerView.
+         * @param adapter  The adapter that manages the the data and views
+         *                 for the RecyclerView.
          */
         public WordViewHolder(View itemView, WordListAdapter adapter) {
             super(itemView);
@@ -69,6 +73,30 @@ public class WordListAdapter extends
             // update the RecyclerView to display the data.
             mAdapter.notifyDataSetChanged();
         }
+
+        public boolean getIsInTheMiddle() {
+            return this.isMiddle;
+        }
+
+        public boolean getIsFirst() {
+            return this.isFirst;
+        }
+
+        public boolean getIsLast() {
+            return this.isLast;
+        }
+
+        public void setIsFirst(boolean b) {
+            this.isFirst = b;
+        }
+
+        public void setIsMiddle(boolean b) {
+            this.isMiddle = b;
+        }
+
+        public void setIsLast(boolean b) {
+            this.isLast = b;
+        }
     }
 
     public WordListAdapter(Context context, LinkedList<String> wordList) {
@@ -79,11 +107,11 @@ public class WordListAdapter extends
     /**
      * Called when RecyclerView needs a new ViewHolder of the given type to
      * represent an item.
-     *
+     * <p>
      * This new ViewHolder should be constructed with a new View that can
      * represent the items of the given type. You can either create a new View
      * manually or inflate it from an XML layout file.
-     *
+     * <p>
      * The new ViewHolder will be used to display items of the adapter using
      * onBindViewHolder(ViewHolder, int, List). Since it will be reused to
      * display different items in the data set, it is a good idea to cache
@@ -117,11 +145,31 @@ public class WordListAdapter extends
     @Override
     public void onBindViewHolder(WordListAdapter.WordViewHolder holder,
                                  int position) {
+
         // Retrieve the data for that position.
         String mCurrent = mWordList.get(position);
         // Add the data to the view holder.
         holder.wordItemView.setText(mCurrent);
+
+        if (position == 0) {
+            holder.setIsFirst(true);
+
+        }
+
+        if (position == mWordList.size() / 2) {
+            Log.e("middle", "onBindViewHolder: " + position);
+            holder.setIsMiddle(true);
+
+
+        }
+
+        if (position == mWordList.size() - 1) {
+            holder.setIsLast(true);
+
+        }
+
     }
+
 
     /**
      * Returns the total number of items in the data set held by the adapter.
